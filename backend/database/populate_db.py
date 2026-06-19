@@ -14,7 +14,7 @@ raw_data_path = os.path.join("data", "customer_churn.csv")
 db_config = {
     "dbname": "postgres",     
     "user": "postgres",       
-    "password": "your_secure_password", # Update with your local password if testing live
+    "password": "Spurthi@123", # Update with your local password if testing live
     "host": "localhost",
     "port": "5432"
 }
