@@ -12,20 +12,44 @@ DB_CONFIG = {
 
 def rebuild_and_seed_perfect_mix():
     try:
-        conn = psycopg2.connect(**DB_CONFIG)
+       # ❌ OLD CRASHING CODE:
+# conn = psycopg2.connect(postgresql://neondb_owner:npg_Sn3ZcI8APeJj@ep-falling-band-aovfp5yl.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require)
+
+# ✅ FIXED PRODUCTION CODE:
+        conn = psycopg2.connect("postgresql://neondb_owner:npg_Sn3ZcI8APeJj@ep-falling-band-aovfp5yl.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require") 
         cursor = conn.cursor()
-        
-        print("🔌 Connecting to PostgreSQL Cluster...")
-        
-        # 1. Clean slate: Wipe the table completely to avoid primary key conflicts
+
+        # 🏗️ SCHEMA BLUEPRINT SYNCHRONIZATION BLOCK
+        # Automatically instantiate the table structure if it's missing on Neon
+        print("🏗️ Verifying relational schema table structures...")
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS customers (
+                customer_id VARCHAR(50) PRIMARY KEY,
+                gender VARCHAR(20),
+                senior_citizen VARCHAR(5),
+                partner VARCHAR(5),
+                dependents VARCHAR(5),
+                tenure_months INT,
+                internet_service VARCHAR(50),
+                payment_method VARCHAR(100),
+                paperless_billing VARCHAR(5),
+                monthly_charges NUMERIC(10, 2),
+                total_charges NUMERIC(10, 2),
+                support_tickets INT
+            );
+        """)
+        conn.commit()
+
+        # 🧹 Flushing table to ensure clean sequential generation...
         print("🧹 Flushing table to ensure clean sequential generation...")
-        cursor.execute("TRUNCATE TABLE customers;")
+        cursor.execute("TRUNCATE TABLE customers RESTART IDENTITY CASCADE;")
+        conn.commit()
 
         # 2. Add the original 3 foundation records back into the batch pool
         base_customers = ['1087', '2441', '9932']
         
         # 3. Create the massive range pool from 1000 to 1050
-        extended_range = [str(i) for i in range(1000, 1051)]
+        extended_range = [str(i) for i in range(1000, 1080)]
         
         # Combine them into a single target list of 54 total accounts
         all_target_ids = list(set(base_customers + extended_range))

@@ -1,11 +1,14 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from dotenv import load_dotenv
 import psycopg2
 import joblib
 import pandas as pd
 import os
 import random
+
+load_dotenv()
 
 app = FastAPI(title="ChurnInsight Enterprise Core Engine", version="1.0.4")
 
@@ -20,11 +23,11 @@ app.add_middleware(
 
 # Database Connection Parameters Matrix
 DB_CONFIG = {
-    "dbname": "postgres",
-    "user": "postgres",
-    "password": "Spurthi@123",  # 🔑 Make sure this matches your local password!
-    "host": "127.0.0.1",
-    "port": "5432"
+    "dbname": os.getenv("DB_NAME"),
+    "user": os.getenv("DB_USER"),
+    "password": os.getenv("DB_PASSWORD"),
+    "host": os.getenv("DB_HOST"),
+    "port": os.getenv("DB_PORT")
 }
 
 # Define the data format coming from the React Frontend

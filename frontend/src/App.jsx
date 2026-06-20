@@ -85,7 +85,10 @@ export default function App() {
     setResult(null);
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/v1/predict', {
+      // 🌐 Dynamically alternate between local host and cloud URLs on compile
+      const BACKEND_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
+
+      const response = await fetch(`${BACKEND_URL}/api/v1/predict`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
